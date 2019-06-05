@@ -27,19 +27,19 @@
 
             head.SetSize((ushort)
                 (
-                System.Runtime.InteropServices.Marshal.SizeOf(typeof(SCServerListPacket))
+                System.Runtime.InteropServices.Marshal.SizeOf(typeof(ScServerListPacket))
                 + System.Runtime.InteropServices.Marshal.SizeOf(typeof(ServerListEntryPart))
                 + System.Runtime.InteropServices.Marshal.SizeOf(typeof(ServerListEntryPart))
                 )
                 );
-            SCServerListPacket packet = new SCServerListPacket { Head = head };
+            ScServerListPacket packet = new ScServerListPacket { Head = head };
             packet.SetCount(2);
 
             return AsynchronousSocketListener.CombineByteArray(AsynchronousSocketListener.CombineByteArray(AsynchronousSocketListener.GetBytes(packet), AsynchronousSocketListener.GetBytes(serverListEntryPart)), AsynchronousSocketListener.GetBytes(serverListEntryPart2));
         }
     }
 
-    internal struct SCServerListPacket : IPacket
+    internal struct ScServerListPacket : IPacket
     {
         public LongPlainPacketHeader Head { get; set; }
         public byte CountH { set; get; }

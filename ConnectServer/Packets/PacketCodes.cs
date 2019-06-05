@@ -45,8 +45,8 @@
         public HeadSubCodeSc HeadSubCode { get; set; }
         public void SetSize(ushort size)
         {
-            SizeL = ((byte)(size & 0xff));
-            SizeH = ((byte)(size >> 8));
+            SizeL = (byte)(size & 0xff);
+            SizeH = (byte)(size >> 8);
         }
     }
 
