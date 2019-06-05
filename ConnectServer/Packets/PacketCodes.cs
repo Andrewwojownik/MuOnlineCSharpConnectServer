@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ConnectServer.Packets
+﻿namespace ConnectServer.Packets
 {
     public enum Type : byte
     {
@@ -11,21 +7,21 @@ namespace ConnectServer.Packets
         SHORT_ENCODED = 0xC3,
         LONG_ENCODED = 0xC4,
     }
-    public enum HeadCodeCS : byte
+    public enum HeadCodeCs : byte
     {
         SERVER_SELECY = 3,
         AUTOUPDATE_DATA = 5,
         CLIENT_CONNECT = 6,
     }
 
-    public enum HeadCodeSC : byte
+    public enum HeadCodeSc : byte
     {
         WELCOME = 0x00,
         CONNECT_SERVER_DATA = 0xF4,
         CONNECT_SERVER_CUSTOM_DATA = 0xFA,
     }
 
-    public enum HeadSubCodeSC : byte
+    public enum HeadSubCodeSc : byte
     {
         NEWS_TITLE = 0x00,
         NEWS_CONTENT = 0x01,
@@ -37,7 +33,7 @@ namespace ConnectServer.Packets
     {
         public Type Type { get; set; }
         public byte Size { get; set; }
-        public HeadCodeSC HeadCode { get; set; }
+        public HeadCodeSc HeadCode { get; set; }
     }
 
     public struct LongPlainPacketHeader
@@ -45,21 +41,21 @@ namespace ConnectServer.Packets
         public Type Type { get; set; }
         public byte SizeH { get; set; }
         public byte SizeL { get; set; }
-        public HeadCodeSC HeadCode { get; set; }
-        public HeadSubCodeSC HeadSubCode { get; set; }
+        public HeadCodeSc HeadCode { get; set; }
+        public HeadSubCodeSc HeadSubCode { get; set; }
         public void SetSize(ushort size)
         {
-            this.SizeL = ((byte)(size & 0xff));
-            this.SizeH = ((byte)(size >> 8));
+            SizeL = ((byte)(size & 0xff));
+            SizeH = ((byte)(size >> 8));
         }
     }
 
-    public interface PacketHandler
+    public interface IPacketHandler
     {
         byte[] CreatePacket();
     }
 
-    public interface Packet
+    public interface IPacket
     {
     }
 }

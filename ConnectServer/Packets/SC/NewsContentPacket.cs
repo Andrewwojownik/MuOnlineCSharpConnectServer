@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
+﻿using System.Runtime.InteropServices;
 
 namespace ConnectServer.Packets.SC
 {
-    class NewsContentPacket : PacketHandler
+    internal class NewsContentPacket : IPacketHandler
     {
         public byte[] CreatePacket()
         {
-            SCNewsContentPacket packet = new SCNewsContentPacket();
-            LongPlainPacketHeader head = new LongPlainPacketHeader();
-            head.Type = Type.LONG_PLAIN;
-            head.HeadCode = HeadCodeSC.CONNECT_SERVER_CUSTOM_DATA;
-            head.HeadSubCode = HeadSubCodeSC.NEWS_CONTENT;
+            ScNewsContentPacket packet = new ScNewsContentPacket();
+            LongPlainPacketHeader head = new LongPlainPacketHeader
+            {
+                Type = Type.LONG_PLAIN,
+                HeadCode = HeadCodeSc.CONNECT_SERVER_CUSTOM_DATA,
+                HeadSubCode = HeadSubCodeSc.NEWS_CONTENT
+            };
             //head.Size = (byte)System.Runtime.InteropServices.Marshal.SizeOf(typeof(SCNewsTitlePacket));
 
             packet.Day = 1;
@@ -28,13 +27,14 @@ namespace ConnectServer.Packets.SC
 
             packet.TextSize = 0;
 
-            head.SetSize((ushort)System.Runtime.InteropServices.Marshal.SizeOf(typeof(SCNewsContentPacket)));
+            head.SetSize((ushort)Marshal.SizeOf(typeof(ScNewsContentPacket)));
             packet.Head = head;
 
-            return AsynchronousSocketListener.getBytes(packet);
+            return AsynchronousSocketListener.GetBytes(packet);
         }
     }
-    struct SCNewsContentPacket : Packet
+
+    internal struct ScNewsContentPacket : IPacket
     {
         public LongPlainPacketHeader Head { get; set; }
         public byte Day { get; set; }
