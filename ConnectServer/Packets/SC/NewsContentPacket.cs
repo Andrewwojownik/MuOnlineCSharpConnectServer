@@ -9,9 +9,9 @@ namespace ConnectServer.Packets.SC
             ScNewsContentPacket packet = new ScNewsContentPacket();
             LongPlainPacketHeader head = new LongPlainPacketHeader
             {
-                Type = Type.LONG_PLAIN,
-                HeadCode = HeadCodeSc.CONNECT_SERVER_CUSTOM_DATA,
-                HeadSubCode = HeadSubCodeSc.NEWS_CONTENT
+                Type = Type.LongPlain,
+                HeadCode = HeadCodeSc.ConnectServerCustomData,
+                HeadSubCode = HeadSubCodeSc.NewsContent
             };
             //head.Size = (byte)System.Runtime.InteropServices.Marshal.SizeOf(typeof(SCNewsTitlePacket));
 
@@ -40,7 +40,6 @@ namespace ConnectServer.Packets.SC
         public byte Day { get; set; }
         public byte Month { get; set; }
         public ushort Year { get; set; }
-
         public ulong DateColor { get; set; }
         public ulong TitleColor { get; set; }
         public ulong TextColor { get; set; }

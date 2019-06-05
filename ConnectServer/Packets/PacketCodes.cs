@@ -2,31 +2,31 @@
 {
     public enum Type : byte
     {
-        SHORT_PLAIN = 0xC1,
-        LONG_PLAIN = 0xC2,
-        SHORT_ENCODED = 0xC3,
-        LONG_ENCODED = 0xC4,
+        ShortPlain = 0xC1,
+        LongPlain = 0xC2,
+        ShortEncoded = 0xC3,
+        LongEncoded = 0xC4,
     }
     public enum HeadCodeCs : byte
     {
-        SERVER_SELECY = 3,
-        AUTOUPDATE_DATA = 5,
-        CLIENT_CONNECT = 6,
+        ServerSelecy = 3,
+        AutoupdateData = 5,
+        ClientConnect = 6,
     }
 
     public enum HeadCodeSc : byte
     {
-        WELCOME = 0x00,
-        CONNECT_SERVER_DATA = 0xF4,
-        CONNECT_SERVER_CUSTOM_DATA = 0xFA,
+        Welcome = 0x00,
+        ConnectServerData = 0xF4,
+        ConnectServerCustomData = 0xFA,
     }
 
     public enum HeadSubCodeSc : byte
     {
-        NEWS_TITLE = 0x00,
-        NEWS_CONTENT = 0x01,
-        SERVER_DATA = 0x03,
-        SERVER_LIST = 0x06,
+        NewsTitle = 0x00,
+        NewsContent = 0x01,
+        ServerData = 0x03,
+        ServerList = 0x06,
     }
 
     public struct ShortPlainPacketHeader

@@ -10,11 +10,11 @@ namespace ConnectServer.Packets.SC
         {
             ScNewsTitlePacket packet = new ScNewsTitlePacket
             {
-                SubCode = HeadSubCodeSc.NEWS_TITLE,
+                SubCode = HeadSubCodeSc.NewsTitle,
                 Head = new ShortPlainPacketHeader
                 {
-                    Type = Type.SHORT_PLAIN,
-                    HeadCode = HeadCodeSc.CONNECT_SERVER_CUSTOM_DATA,
+                    Type = Type.ShortPlain,
+                    HeadCode = HeadCodeSc.ConnectServerCustomData,
                     Size = (byte) Marshal.SizeOf(typeof(ScNewsTitlePacket))
                 }
             };
@@ -34,6 +34,6 @@ namespace ConnectServer.Packets.SC
         public ShortPlainPacketHeader Head { get; set; }
         public HeadSubCodeSc SubCode { get; set; }
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-        public byte[] ServerName;
+        public Memory<byte> ServerName;
     }
 }

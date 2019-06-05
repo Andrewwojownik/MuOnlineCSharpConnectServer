@@ -6,8 +6,8 @@
         {
             ShortPlainPacketHeader head = new ShortPlainPacketHeader
             {
-                Type = Type.SHORT_PLAIN,
-                HeadCode = HeadCodeSc.WELCOME,
+                Type = Type.ShortPlain,
+                HeadCode = HeadCodeSc.Welcome,
                 Size = 4
             };
 

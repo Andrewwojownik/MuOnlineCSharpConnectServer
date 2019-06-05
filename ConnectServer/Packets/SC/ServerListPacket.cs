@@ -1,4 +1,6 @@
-﻿namespace ConnectServer.Packets.SC
+﻿using System.Runtime.InteropServices;
+
+namespace ConnectServer.Packets.SC
 {
     internal class ServerListPacket : IPacketHandler
     {
@@ -6,9 +8,9 @@
         {
             LongPlainPacketHeader head = new LongPlainPacketHeader
             {
-                Type = Type.LONG_PLAIN,
-                HeadCode = HeadCodeSc.CONNECT_SERVER_DATA,
-                HeadSubCode = HeadSubCodeSc.SERVER_LIST
+                Type = Type.LongPlain,
+                HeadCode = HeadCodeSc.ConnectServerData,
+                HeadSubCode = HeadSubCodeSc.ServerList
             };
 
             ServerListEntryPart serverListEntryPart = new ServerListEntryPart
@@ -26,16 +28,18 @@
             };
 
             head.SetSize((ushort)
-                (
-                System.Runtime.InteropServices.Marshal.SizeOf(typeof(ScServerListPacket))
-                + System.Runtime.InteropServices.Marshal.SizeOf(typeof(ServerListEntryPart))
-                + System.Runtime.InteropServices.Marshal.SizeOf(typeof(ServerListEntryPart))
-                )
-                );
+                (Marshal.SizeOf(typeof(ScServerListPacket))
+                + Marshal.SizeOf(typeof(ServerListEntryPart))
+                + Marshal.SizeOf(typeof(ServerListEntryPart))));
+
             ScServerListPacket packet = new ScServerListPacket { Head = head };
             packet.SetCount(2);
 
-            return AsynchronousSocketListener.CombineByteArray(AsynchronousSocketListener.CombineByteArray(AsynchronousSocketListener.GetBytes(packet), AsynchronousSocketListener.GetBytes(serverListEntryPart)), AsynchronousSocketListener.GetBytes(serverListEntryPart2));
+            return AsynchronousSocketListener.CombineByteArray(
+                    AsynchronousSocketListener.CombineByteArray(
+                        AsynchronousSocketListener.GetBytes(packet),
+                        AsynchronousSocketListener.GetBytes(serverListEntryPart)),
+                        AsynchronousSocketListener.GetBytes(serverListEntryPart2));
         }
     }
 
@@ -46,8 +50,8 @@
         public byte CountL { set; get; }
         public void SetCount(ushort count)
         {
-            CountL = ((byte)(count & 0xff));
-            CountH = ((byte)(count >> 8));
+            CountL = (byte)(count & 0xff);
+            CountH = (byte)(count >> 8);
         }
     }
 
