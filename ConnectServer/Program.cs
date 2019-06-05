@@ -1,14 +1,14 @@
-﻿using System;
+﻿using ConnectServer.Packets;
+using ConnectServer.Packets.SC;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Threading;
-using ConnectServer.Packets;
-using ConnectServer.Packets.SC;
 
 namespace ConnectServer
 {
-    public class AsynchronousSocketListener
+    public class Program
     {
         // Thread signal.  
         public static ManualResetEvent AllDone = new ManualResetEvent(false);
@@ -65,8 +65,8 @@ namespace ConnectServer
                 Socket handler = listener.EndAccept(ar);
 
                 // Create the state object.  
-                StateObject state = new StateObject {WorkSocket = handler};
-                handler.BeginReceive(state.Buffer, 0, 
+                StateObject state = new StateObject { WorkSocket = handler };
+                handler.BeginReceive(state.Buffer, 0,
                     StateObject.BufferSize, 0, ReadCallback, state);
 
                 WelcomePacket packet = new WelcomePacket();
@@ -77,7 +77,7 @@ namespace ConnectServer
 
                 NewsContentPacket packet3 = new NewsContentPacket();
                 Send(handler, packet3.CreatePacket());
-            } 
+            }
             catch (Exception e)
             {
                 Console.WriteLine(e.StackTrace);
@@ -100,9 +100,10 @@ namespace ConnectServer
                 return;
             }
 
-            byte type = state.Buffer[0];
             int? size = null;
             byte? headcode = null;
+            byte type = state.Buffer[0];
+
             if (type == 0xC1 || type == 0xC3)
             {
                 size = state.Buffer[1];
@@ -122,48 +123,28 @@ namespace ConnectServer
                 Console.WriteLine("Unknow packet type 0x{0:X}", type);
                 Console.ResetColor();
             }
-            // There  might be more data, so store the data received so far.  
-            //state.sb.Append(Encoding.ASCII.GetString(
-            //    state.buffer, 0, bytesRead));
 
-            // Check for end-of-file tag. If it is not there, read   
-            // more data.  
-            //content = state.sb.ToString();
-            //if (content.IndexOf("<EOF>") > -1)
-            //{
-            // All the data has been read from the   
-            // client. Display it on the console.  
             Console.WriteLine("Read {0} bytes from socket.",
                 state.Buffer.Length);
             Console.WriteLine("Packet type: 0x{0:X} headcode: 0x{1:X} size: 0x{2:X}", type, headcode, size);
             Console.WriteLine(BitConverter.ToString(state.Buffer));
 
-            switch (headcode)
+            if (headcode == 0xF4)
             {
-                case 0xF4:
-                    switch (state.Buffer[3])
-                    {
-                        case 6:
-                            ServerListPacket packetData = new ServerListPacket();
-                            Send(handler, packetData.CreatePacket());
-                            break;
-                        case 3:
-                            byte[] packetData2 = { 0xC1, 0x15, 0xF4, 0x03, 0x31, 0x39, 0x32, 0x2e, 0x31, 0x36, 0x38, 0x2e, 0x31, 0x35, 0x38, 0x00, 0x00, 0x00, 0x00, 0x00, 0xDA, 0x5C };
-                            Send(handler, packetData2);
-                            break;
-                    }
-                    break;
+                if (state.Buffer[3] == 6)
+                {
+                    ServerListPacket packetData = new ServerListPacket();
+                    Send(handler, packetData.CreatePacket());
+                }
+                else if (state.Buffer[3] == 3)
+                {
+                    byte[] packetData2 = { 0xC1, 0x15, 0xF4, 0x03, 0x31, 0x39, 0x32, 0x2e, 0x31, 0x36, 0x38, 0x2e, 0x31, 0x35, 0x38, 0x00, 0x00, 0x00, 0x00, 0x00, 0xDA, 0x5C };
+                    Send(handler, packetData2);
+                }
             }
 
-            // Echo the data back to the client.  
-            //Send(handler, content);
-            //}
-            //else
-            //{
-            // Not all data received. Get more.  
             handler.BeginReceive(state.Buffer, 0, StateObject.BufferSize, 0,
                 ReadCallback, state);
-            //}
         }
 
         private static void Send(Socket handler, byte[] data)
@@ -196,10 +177,9 @@ namespace ConnectServer
             }
         }
 
-        public static int Main(String[] args)
+        public static int Main()
         {
-            Config config = new Config();
-            config.Port = 44405;
+            Config config = new Config { Port = 44405 };
             Console.WriteLine("Starting Connect Server on port: {0}", config.Port);
             StartListening(config);
             return 0;
