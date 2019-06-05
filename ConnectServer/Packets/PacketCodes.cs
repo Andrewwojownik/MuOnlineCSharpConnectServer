@@ -9,7 +9,7 @@
     }
     public enum HeadCodeCs : byte
     {
-        ServerSelecy = 3,
+        ServerSelect = 3,
         AutoupdateData = 5,
         ClientConnect = 6,
     }

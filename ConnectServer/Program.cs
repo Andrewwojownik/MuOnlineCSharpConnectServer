@@ -101,20 +101,20 @@ namespace ConnectServer
             }
 
             int? size = null;
-            byte? headcode = null;
+            HeadCodeSc? headcode = null;
             byte type = state.Buffer[0];
 
             if (type == 0xC1 || type == 0xC3)
             {
                 size = state.Buffer[1];
-                headcode = state.Buffer[2];
+                headcode = (HeadCodeSc)state.Buffer[2];
                 Console.WriteLine("C1/C3 packet type");
             }
             else if (type == 0xC2 || type == 0xC4)
             {
                 size = state.Buffer[1] * 256;
                 size |= state.Buffer[2];
-                headcode = state.Buffer[3];
+                headcode = (HeadCodeSc)state.Buffer[3];
                 Console.WriteLine("C2/C4 packet type");
             }
             else
@@ -129,14 +129,14 @@ namespace ConnectServer
             Console.WriteLine("Packet type: 0x{0:X} headcode: 0x{1:X} size: 0x{2:X}", type, headcode, size);
             Console.WriteLine(BitConverter.ToString(state.Buffer));
 
-            if (headcode == 0xF4)
+            if (headcode == HeadCodeSc.ConnectServerData)
             {
-                if (state.Buffer[3] == 6)
+                if ((HeadCodeCs)state.Buffer[3] == HeadCodeCs.ClientConnect)
                 {
                     ServerListPacket packetData = new ServerListPacket();
                     Send(handler, packetData.CreatePacket());
                 }
-                else if (state.Buffer[3] == 3)
+                else if ((HeadCodeCs)state.Buffer[3] == HeadCodeCs.ServerSelect)
                 {
                     byte[] packetData2 = { 0xC1, 0x15, 0xF4, 0x03, 0x31, 0x39, 0x32, 0x2e, 0x31, 0x36, 0x38, 0x2e, 0x31, 0x35, 0x38, 0x00, 0x00, 0x00, 0x00, 0x00, 0xDA, 0x5C };
                     Send(handler, packetData2);
