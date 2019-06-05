@@ -24,7 +24,7 @@ namespace ConnectServer.Packets.SC
                 serverNameBytes, 0, serverName.Length);
             packet.ServerName = serverNameBytes;
 
-            return AsynchronousSocketListener.GetBytes(packet);
+            return packet.GetBytes();
         }
     }
 
@@ -33,6 +33,6 @@ namespace ConnectServer.Packets.SC
         public ShortPlainPacketHeader Head { get; set; }
         public HeadSubCodeSc SubCode { get; set; }
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-        public Memory<byte> ServerName;
+        public byte[] ServerName;
     }
 }

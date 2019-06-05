@@ -184,8 +184,11 @@ namespace ConnectServer
             StartListening(config);
             return 0;
         }
+    }
 
-        public static byte[] GetBytes(IPacket str)
+    public static class ScWelcomePacketExtensions
+    {
+        public static byte[] GetBytes(this IPacket str)
         {
             int size = Marshal.SizeOf(str);
             byte[] arr = new byte[size];
@@ -197,7 +200,7 @@ namespace ConnectServer
             return arr;
         }
 
-        public static byte[] CombineByteArray(byte[] first, byte[] second)
+        public static byte[] Combine(this byte[] first, byte[] second)
         {
             byte[] ret = new byte[first.Length + second.Length];
             Buffer.BlockCopy(first, 0, ret, 0, first.Length);

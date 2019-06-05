@@ -35,11 +35,9 @@ namespace ConnectServer.Packets.SC
             ScServerListPacket packet = new ScServerListPacket { Head = head };
             packet.SetCount(2);
 
-            return AsynchronousSocketListener.CombineByteArray(
-                    AsynchronousSocketListener.CombineByteArray(
-                        AsynchronousSocketListener.GetBytes(packet),
-                        AsynchronousSocketListener.GetBytes(serverListEntryPart)),
-                        AsynchronousSocketListener.GetBytes(serverListEntryPart2));
+            return packet.GetBytes()
+                .Combine(serverListEntryPart.GetBytes())
+                .Combine(serverListEntryPart2.GetBytes());
         }
     }
 

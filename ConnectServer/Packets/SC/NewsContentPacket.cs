@@ -28,7 +28,7 @@ namespace ConnectServer.Packets.SC
                 TextSize = 0
             };
 
-            return AsynchronousSocketListener.GetBytes(packet);
+            return packet.GetBytes();
         }
     }
 

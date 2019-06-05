@@ -13,7 +13,7 @@
 
             ScWelcomePacket packet = new ScWelcomePacket { Head = head, Result = 1 };
 
-            return AsynchronousSocketListener.GetBytes(packet);
+            return packet.GetBytes();
         }
     }
     internal struct ScWelcomePacket : IPacket
