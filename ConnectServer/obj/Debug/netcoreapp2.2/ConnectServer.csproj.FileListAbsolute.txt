@@ -1,0 +1,11 @@
+C:\Users\andre\source\repos\MuOnline\Experimental\ConnectServer\ConnectServer\bin\Debug\netcoreapp2.2\ConnectServer.deps.json
+C:\Users\andre\source\repos\MuOnline\Experimental\ConnectServer\ConnectServer\bin\Debug\netcoreapp2.2\ConnectServer.runtimeconfig.json
+C:\Users\andre\source\repos\MuOnline\Experimental\ConnectServer\ConnectServer\bin\Debug\netcoreapp2.2\ConnectServer.runtimeconfig.dev.json
+C:\Users\andre\source\repos\MuOnline\Experimental\ConnectServer\ConnectServer\bin\Debug\netcoreapp2.2\ConnectServer.dll
+C:\Users\andre\source\repos\MuOnline\Experimental\ConnectServer\ConnectServer\bin\Debug\netcoreapp2.2\ConnectServer.pdb
+C:\Users\andre\source\repos\MuOnline\Experimental\ConnectServer\ConnectServer\obj\Debug\netcoreapp2.2\ConnectServer.csprojAssemblyReference.cache
+C:\Users\andre\source\repos\MuOnline\Experimental\ConnectServer\ConnectServer\obj\Debug\netcoreapp2.2\ConnectServer.csproj.CoreCompileInputs.cache
+C:\Users\andre\source\repos\MuOnline\Experimental\ConnectServer\ConnectServer\obj\Debug\netcoreapp2.2\ConnectServer.AssemblyInfoInputs.cache
+C:\Users\andre\source\repos\MuOnline\Experimental\ConnectServer\ConnectServer\obj\Debug\netcoreapp2.2\ConnectServer.AssemblyInfo.cs
+C:\Users\andre\source\repos\MuOnline\Experimental\ConnectServer\ConnectServer\obj\Debug\netcoreapp2.2\ConnectServer.dll
+C:\Users\andre\source\repos\MuOnline\Experimental\ConnectServer\ConnectServer\obj\Debug\netcoreapp2.2\ConnectServer.pdb
