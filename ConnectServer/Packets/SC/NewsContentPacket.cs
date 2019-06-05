@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace ConnectServer.Packets.SC
 {
@@ -23,10 +25,15 @@ namespace ConnectServer.Packets.SC
                 DateColor = 0xFFFFFFFF,
                 TitleColor = 0xFFFFFFFF,
                 TextColor = 0xFFFFFFFF,
-                Title = "Test",
                 Head = head,
                 TextSize = 0
             };
+
+            const string Title = "Server news";
+            byte[] serverNewsBytes = new byte[20];
+            Array.Copy(Encoding.ASCII.GetBytes(Title), 0,
+                serverNewsBytes, 0, Title.Length);
+            packet.Title = serverNewsBytes;
 
             return packet.GetBytes();
         }
@@ -41,8 +48,8 @@ namespace ConnectServer.Packets.SC
         public ulong DateColor { get; set; }
         public ulong TitleColor { get; set; }
         public ulong TextColor { get; set; }
-        [MarshalAs(UnmanagedType.LPTStr, SizeConst = 20)]
-        public string Title;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
+        public byte[] Title;
         public ushort TextSize { get; set; }
     }
 }
