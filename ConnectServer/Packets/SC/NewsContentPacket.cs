@@ -6,29 +6,27 @@ namespace ConnectServer.Packets.SC
     {
         public byte[] CreatePacket()
         {
-            ScNewsContentPacket packet = new ScNewsContentPacket();
             LongPlainPacketHeader head = new LongPlainPacketHeader
             {
                 Type = Type.LongPlain,
                 HeadCode = HeadCodeSc.ConnectServerCustomData,
                 HeadSubCode = HeadSubCodeSc.NewsContent
             };
-            //head.Size = (byte)System.Runtime.InteropServices.Marshal.SizeOf(typeof(SCNewsTitlePacket));
-
-            packet.Day = 1;
-            packet.Month = 1;
-            packet.Year = 2019;
-
-            packet.DateColor = 0xFFFFFFFF;
-            packet.TitleColor = 0xFFFFFFFF;
-            packet.TextColor = 0xFFFFFFFF;
-
-            packet.Title = "Test";
-
-            packet.TextSize = 0;
 
             head.SetSize((ushort)Marshal.SizeOf(typeof(ScNewsContentPacket)));
-            packet.Head = head;
+
+            ScNewsContentPacket packet = new ScNewsContentPacket
+            {
+                Day = 1,
+                Month = 1,
+                Year = 2019,
+                DateColor = 0xFFFFFFFF,
+                TitleColor = 0xFFFFFFFF,
+                TextColor = 0xFFFFFFFF,
+                Title = "Test",
+                Head = head,
+                TextSize = 0
+            };
 
             return AsynchronousSocketListener.GetBytes(packet);
         }

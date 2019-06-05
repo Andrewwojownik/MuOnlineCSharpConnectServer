@@ -20,7 +20,6 @@ namespace ConnectServer.Packets.SC
             };
             const string serverName = "KamikazeMU";
             byte[] serverNameBytes = new byte[12];
-            Array.Clear(serverNameBytes, 0, serverNameBytes.Length);
             Array.Copy(Encoding.ASCII.GetBytes(serverName), 0, 
                 serverNameBytes, 0, serverName.Length);
             packet.ServerName = serverNameBytes;
