@@ -13,7 +13,6 @@ namespace ConnectServer.ServerConnector
         {
             this.receiveMessage(config.UdpPort);
         }
-
         public void UpdateOrAddServer(ServerDataUpdatePacket serverDataUpdatePacket)
         {
             foreach( ServerObject serverObject in this.servers)
