@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ConnectServer.Packets.SC
 {
-    internal class NewsTitlePacket : IPacketHandler
+    internal class NewsTitlePacket : ICreatePacketHandler
     {
         public byte[] CreatePacket()
         {

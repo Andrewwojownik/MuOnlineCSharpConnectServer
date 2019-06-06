@@ -1,6 +1,6 @@
 ﻿namespace ConnectServer.Packets.SC
 {
-    internal class WelcomePacket : IPacketHandler
+    internal class WelcomePacket : ICreatePacketHandler
     {
         public byte[] CreatePacket()
         {

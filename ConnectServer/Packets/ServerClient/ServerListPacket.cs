@@ -2,7 +2,7 @@
 
 namespace ConnectServer.Packets.SC
 {
-    internal class ServerListPacket : IPacketHandler
+    internal class ServerListPacket : ICreatePacketHandler
     {
         public byte[] CreatePacket()
         {
@@ -12,6 +12,10 @@ namespace ConnectServer.Packets.SC
                 HeadCode = HeadCodeSc.ConnectServerData,
                 HeadSubCode = HeadSubCodeSc.ServerList
             };
+
+            ushort count = 0;
+
+            
 
             ServerListEntryPart serverListEntryPart = new ServerListEntryPart
             {
@@ -33,7 +37,7 @@ namespace ConnectServer.Packets.SC
                 + Marshal.SizeOf(typeof(ServerListEntryPart))));
 
             ScServerListPacket packet = new ScServerListPacket { Head = head };
-            packet.SetCount(2);
+            packet.SetCount(ushort);
 
             return packet.GetBytes()
                 .Combine(serverListEntryPart.GetBytes())

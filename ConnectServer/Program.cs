@@ -181,25 +181,25 @@ namespace ConnectServer
         public static int Main()
         {
             Config config = new Config { Port = 44405, UdpPort = 55667 };
-            Console.WriteLine("Starting Connect Server on port: {0}", config.Port);
-            Thread thread = new Thread(() => StartListening(config));
 
             Console.WriteLine("Starting Connect Server Udp on port: {0}", config.UdpPort);
             ServerConnector.Server udpServer = new ServerConnector.Server();
             udpServer.Run(config);
 
+            Console.WriteLine("Starting Connect Server on port: {0}", config.Port);
+            Thread thread = new Thread(() => StartListening(config));
+                     
             while (true)
             {
                 ConsoleKeyInfo result = Console.ReadKey();
                 if ((result.KeyChar == 'Q') || (result.KeyChar == 'q'))
                 {
+                    Console.WriteLine();
                     Console.WriteLine("Quit from app.");
                     Thread.Sleep(1000);
                     return 0;
                 }
             }
-
-            return 0;
         }
 
         public static byte[] ConvertStringToBytes(string str, int size)
@@ -210,6 +210,19 @@ namespace ConnectServer
                 strBytes, 0, str.Length);
 
             return strBytes;
+        }
+
+        public static T ByteArrayToStructure<T>(byte[] bytes) where T : struct
+        {
+            var handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
+            try
+            {
+                return (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
+            }
+            finally
+            {
+                handle.Free();
+            }
         }
     }
 

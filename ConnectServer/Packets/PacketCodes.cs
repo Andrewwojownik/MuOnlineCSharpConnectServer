@@ -14,6 +14,11 @@
         ClientConnect = 6,
     }
 
+    public enum HeadCodeGSToCS : byte
+    {
+        ServerInfo = 1,
+    }
+
     public enum HeadCodeSc : byte
     {
         Welcome = 0x00,
@@ -50,9 +55,14 @@
         }
     }
 
-    public interface IPacketHandler
+    public interface ICreatePacketHandler
     {
         byte[] CreatePacket();
+    }
+
+    public interface IIncomingPacketHandler
+    {
+        void Handle(byte[] rawPacket);
     }
 
     public interface IPacket
