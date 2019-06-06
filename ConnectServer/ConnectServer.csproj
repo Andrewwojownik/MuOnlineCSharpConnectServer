@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Packets\CS\" />
+    <Folder Include="Packets\ClientServer\" />
   </ItemGroup>
 
 </Project>

@@ -2,6 +2,8 @@
 {
     public class Config
     {
-        public int Port { get; set; }
+        public ushort Port { get; set; }
+
+        public ushort UdpPort { get; set; }
     }
 }

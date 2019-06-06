@@ -4,6 +4,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 
 namespace ConnectServer
@@ -179,14 +180,40 @@ namespace ConnectServer
 
         public static int Main()
         {
-            Config config = new Config { Port = 44405 };
+            Config config = new Config { Port = 44405, UdpPort = 55667 };
             Console.WriteLine("Starting Connect Server on port: {0}", config.Port);
-            StartListening(config);
+            Thread thread = new Thread(() => StartListening(config));
+
+            Console.WriteLine("Starting Connect Server Udp on port: {0}", config.UdpPort);
+            ServerConnector.Server udpServer = new ServerConnector.Server();
+            udpServer.Run(config);
+
+            while (true)
+            {
+                ConsoleKeyInfo result = Console.ReadKey();
+                if ((result.KeyChar == 'Q') || (result.KeyChar == 'q'))
+                {
+                    Console.WriteLine("Quit from app.");
+                    Thread.Sleep(1000);
+                    return 0;
+                }
+            }
+
             return 0;
+        }
+
+        public static byte[] ConvertStringToBytes(string str, int size)
+        {
+            byte[] strBytes = new byte[size];
+            Array.Clear(strBytes, 0, strBytes.Length);
+            Array.Copy(Encoding.ASCII.GetBytes(str), 0,
+                strBytes, 0, str.Length);
+
+            return strBytes;
         }
     }
 
-    public static class ScWelcomePacketExtensions
+    public static class PacketExtensions
     {
         public static byte[] GetBytes(this IPacket str)
         {

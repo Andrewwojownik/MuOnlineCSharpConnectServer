@@ -29,11 +29,13 @@ namespace ConnectServer.Packets.SC
                 TextSize = 0
             };
 
-            const string Title = "Server news";
-            byte[] serverNewsBytes = new byte[20];
-            Array.Copy(Encoding.ASCII.GetBytes(Title), 0,
-                serverNewsBytes, 0, Title.Length);
-            packet.Title = serverNewsBytes;
+            const string newsTitle = "Example news";
+            packet.Title = Program.ConvertStringToBytes(newsTitle, 20);
+
+            const string newsContent = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin eu luctus massa, vitae bibendum arcu. Etiam a enim eget quam vulputate luctus. Nullam sed nisi posuere, aliquet lacus mattis, condimentum metus. Pellentesque tincidunt ut ante vel venenatis. Nulla elementum placerat mi ac venenatis. Ut eleifend tellus et tellus euismod auctor. Ut dignissim, arcu id pulvinar auctor, odio est tincidunt justo, sed sagittis ligula nisl sit amet nulla. Integer sed tempus arcu, vel cursus velit. Vestibulum in commodo dolor. Morbi eu mi orci. ";
+            packet.Content = Program.ConvertStringToBytes(newsContent, 2048);
+
+            packet.TextSize = 538;
 
             return packet.GetBytes();
         }
@@ -51,5 +53,7 @@ namespace ConnectServer.Packets.SC
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
         public byte[] Title;
         public ushort TextSize { get; set; }
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2048)]
+        public byte[] Content;
     }
 }
