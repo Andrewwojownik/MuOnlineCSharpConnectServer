@@ -26,6 +26,11 @@ namespace ConnectServer.Packets.SC
 
             foreach (ServerObject server in server.Servers)
             {
+                if(server.Visible == false)
+                {
+                    continue;
+                }
+
                 ServerListEntryPart serverListEntryPart = new ServerListEntryPart()
                 {
                     ServerCode = server.ServerCode,

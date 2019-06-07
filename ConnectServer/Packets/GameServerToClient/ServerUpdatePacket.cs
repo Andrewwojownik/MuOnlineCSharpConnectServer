@@ -18,7 +18,7 @@ namespace ConnectServer.Packets.GameServerToClient
         {
             ServerDataUpdatePacket packet = Program.ByteArrayToStructure<ServerDataUpdatePacket>(rawPacket);
             this.server.UpdateOrAddServer(packet);
-            Console.WriteLine("Server data update: code: {0} online: {1}  max:{2}", packet.ServerCode, packet.UserCount, packet.MaxUserCount);
+            //Console.WriteLine("Server data update: code: {0} online: {1}  max:{2}", packet.ServerCode, packet.UserCount, packet.MaxUserCount);
         }
     }
 

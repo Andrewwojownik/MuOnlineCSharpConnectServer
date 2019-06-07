@@ -19,11 +19,12 @@ namespace ConnectServer.Packets.ServerClient
         {
             ShortPlainPacketHeader head = new ShortPlainPacketHeader
             {
-                Type = Type.LongPlain,
+                Type = Type.ShortPlain,
                 HeadCode = HeadCodeSc.ConnectServerData,
+                Size = (byte)Marshal.SizeOf(typeof(ScServerDataPacket))
             };
 
-            ServerObject chosenServer;
+            ServerObject chosenServer = null;
 
             foreach (ServerObject server in server.Servers)
             {
@@ -33,15 +34,19 @@ namespace ConnectServer.Packets.ServerClient
                 }
             }
 
+            if(chosenServer == null)
+            {
+                throw new Exception("Ask for non exist server!");
+            }
+
             ScServerDataPacket packet = new ScServerDataPacket()
             {
                 Head = head,
                 SubCode = HeadSubCodeSc.ServerData,
-                //Port = chosenServer.Port,
+                Port = (ushort)chosenServer.Port,
             };
 
-            const string IP = "KamikazeMU";
-            packet.IP = Program.ConvertStringToBytes(IP, 16);
+            packet.IP = Program.ConvertStringToBytes(chosenServer.IP, 16);
 
             return packet.GetBytes();
         }

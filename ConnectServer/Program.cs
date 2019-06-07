@@ -16,6 +16,7 @@ namespace ConnectServer
 
             Console.WriteLine("Starting Connect Server Udp on port: {0}", config.UdpPort);
             udpServer = new ServerConnector.Server();
+            udpServer.LoadServerConfig();
             udpServer.Run(config);
 
             Console.WriteLine("Starting Connect Server on port: {0}", config.Port);
@@ -31,6 +32,11 @@ namespace ConnectServer
                     Console.WriteLine("Quit from app.");
                     Thread.Sleep(1000);
                     return 0;
+                }
+                if ((result.KeyChar == 'R') || (result.KeyChar == 'r'))
+                {
+                    Console.WriteLine("Reload config.");
+                    udpServer.LoadServerConfig();
                 }
             }
         }

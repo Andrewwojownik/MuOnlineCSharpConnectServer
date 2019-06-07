@@ -98,25 +98,28 @@ namespace ConnectServer.ClientConnector
                         Console.WriteLine("Packet type: 0x{0:X} headcode: 0x{1:X} size: 0x{2:X}", type, headcode, size);
                         Console.WriteLine(BitConverter.ToString(buffer));
 
-                        if (headcode == HeadCodeSc.ConnectServerData)
+                        try
                         {
-                            if ((HeadCodeCs)buffer[3] == HeadCodeCs.ClientConnect)
+                            if (headcode == HeadCodeSc.ConnectServerData)
                             {
-                                ServerListPacket packetData = new ServerListPacket(udpServer);
-                                byte[] packetBytes4 = packetData.CreatePacket();
-                                //await networkStream.WriteAsync(packetBytes4, 0, packetBytes4.Length);
-                                Send(tcpClient, packetBytes4);
-                            }
-                            else if ((HeadCodeCs)buffer[3] == HeadCodeCs.ServerSelect)
-                            {
-                                ServerDataPacket packetData = new ServerDataPacket(udpServer, buffer);
-                                byte[] packetBytes4 = packetData.CreatePacket();
-                                //await networkStream.WriteAsync(packetBytes4, 0, packetBytes4.Length);
+                                if ((HeadCodeCs)buffer[3] == HeadCodeCs.ClientConnect)
+                                {
+                                    ServerListPacket packetData = new ServerListPacket(udpServer);
+                                    byte[] packetBytes4 = packetData.CreatePacket();
 
-                                //byte[] packetData2 = { 0xC1, 0x15, 0xF4, 0x03, 0x31, 0x39, 0x32, 0x2e, 0x31, 0x36, 0x38, 0x2e, 0x31, 0x35, 0x38, 0x00, 0x00, 0x00, 0x00, 0x00, 0xDA, 0x5C };
-                                //Send(handler, packetData2);
-                                Send(tcpClient, packetBytes4);
+                                    Send(tcpClient, packetBytes4);
+                                }
+                                else if ((HeadCodeCs)buffer[3] == HeadCodeCs.ServerSelect)
+                                {
+                                    ServerDataPacket packetData = new ServerDataPacket(udpServer, buffer);
+                                    byte[] packetBytes4 = packetData.CreatePacket();
+
+                                    Send(tcpClient, packetBytes4);
+                                }
                             }
+                        } catch(Exception)
+                        {
+                            
                         }
                     }
                     //await HandleConnectionAsync(tcpClient);

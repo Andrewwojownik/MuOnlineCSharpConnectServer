@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+//
+// ### ServerList::Server ###
+//	Code: Code of Server
+//	IP: WAN IP or DNS (hostname) for the Server, max 15 characters
+//	Port: PORT of the Server
+//	Visible: Hide server on Server Selection List or Show it, 0/1
+//	Name: Name of the Server, used for informational purpose only, max 40 alphanumerical characters
+//
+//	~ IMPORTANT ~ Code, IP and Port must match \Data\MapServer.xml and GameServer.ini configuration
+//
+// STRICTLY NO COMMENTS INSIDE TAGS
+-->
+
+<ServerList>
+	<Server Code="0"  IP="192.168.0.158" Port="56900" Visible="1" Name="Regular" />
+	<Server Code="1"  IP="192.168.0.158" Port="56901" Visible="1" Name="Regular2" />
+	<Server Code="14" IP="192.168.0.158" Port="56914" Visible="0" Name="Siege" />
+</ServerList>
