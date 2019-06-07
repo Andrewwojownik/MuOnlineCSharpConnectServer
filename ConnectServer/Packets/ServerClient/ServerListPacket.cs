@@ -1,12 +1,20 @@
 ﻿using System.Runtime.InteropServices;
+using ConnectServer.ServerConnector;
 
 namespace ConnectServer.Packets.SC
 {
     internal class ServerListPacket : ICreatePacketHandler
     {
-        //ServerConnector.Server 
+        ServerConnector.Server server;
+
+        public ServerListPacket(Server server)
+        {
+            this.server = server;
+        }
         public byte[] CreatePacket()
         {
+            byte[] returnBytes = new byte[4096];
+
             LongPlainPacketHeader head = new LongPlainPacketHeader
             {
                 Type = Type.LongPlain,
@@ -14,34 +22,29 @@ namespace ConnectServer.Packets.SC
                 HeadSubCode = HeadSubCodeSc.ServerList
             };
 
-            ushort count = 2;
-            
+            ushort count = 0;
 
-            ServerListEntryPart serverListEntryPart = new ServerListEntryPart
+            foreach (ServerObject server in server.Servers)
             {
-                ServerCode = 0,
-                Percent = 60,
-                PlayType = 0
-            };
-
-            ServerListEntryPart serverListEntryPart2 = new ServerListEntryPart
-            {
-                ServerCode = 1,
-                Percent = 10,
-                PlayType = 0
-            };
+                ServerListEntryPart serverListEntryPart = new ServerListEntryPart()
+                {
+                    ServerCode = server.ServerCode,
+                    Percent = server.Percent,
+                    PlayType = server.PlayType,
+                };
+                System.Buffer.BlockCopy(serverListEntryPart.GetBytes(), 0, returnBytes, Marshal.SizeOf(typeof(ServerListEntryPart))*count, Marshal.SizeOf(typeof(ServerListEntryPart)));
+                ++count;
+            }
 
             head.SetSize((ushort)
                 (Marshal.SizeOf(typeof(ScServerListPacket))
-                + Marshal.SizeOf(typeof(ServerListEntryPart))
-                + Marshal.SizeOf(typeof(ServerListEntryPart))));
+                + Marshal.SizeOf(typeof(ServerListEntryPart)) * count));
 
             ScServerListPacket packet = new ScServerListPacket { Head = head };
             packet.SetCount(count);
 
             return packet.GetBytes()
-                .Combine(serverListEntryPart.GetBytes())
-                .Combine(serverListEntryPart2.GetBytes());
+                .Combine(returnBytes);
         }
     }
 
@@ -59,7 +62,7 @@ namespace ConnectServer.Packets.SC
 
     internal struct ServerListEntryPart : IPacket
     {
-        public ushort ServerCode { set; get; }
+        public short ServerCode { set; get; }
         public byte Percent { set; get; }
         public byte PlayType { set; get; }
     }

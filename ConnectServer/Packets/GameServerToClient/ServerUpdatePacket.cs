@@ -22,7 +22,7 @@ namespace ConnectServer.Packets.GameServerToClient
         }
     }
 
-    internal struct ServerDataUpdatePacket : IPacket
+    public struct ServerDataUpdatePacket : IPacket
     {
         public ShortPlainPacketHeader Head { get; set; }
         public short ServerCode { set; get; }

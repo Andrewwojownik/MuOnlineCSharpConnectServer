@@ -1,7 +1,10 @@
 ﻿using ConnectServer.Packets;
 using ConnectServer.Packets.SC;
+using ConnectServer.Packets.ServerClient;
+using ConnectServer.ServerConnector;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
@@ -13,8 +16,14 @@ namespace ConnectServer.ClientConnector
 {
     public class Server
     {
-        //private Config config;
-        public Task Run(Config config)
+        private Config config;
+        private ServerConnector.Server udpServer;
+        public Server(Config config, ServerConnector.Server udpServer)
+        {
+            this.config = config;
+            this.udpServer = udpServer;
+        }
+        public Task Run()
         {
             return Task.Run(async () =>
             {
@@ -24,18 +33,6 @@ namespace ConnectServer.ClientConnector
                 {
                     var tcpClient = await tcpListener.AcceptTcpClientAsync();
                     Console.WriteLine("[Server] Client has connected");
-
-                    WelcomePacket packet = new WelcomePacket();
-                    byte[] packetBytes = packet.CreatePacket();
-                    tcpClient.GetStream().WriteAsync(packetBytes, 0, packetBytes.Length);
-
-                    NewsTitlePacket packet2 = new NewsTitlePacket();
-                    byte[] packetBytes2 = packet2.CreatePacket();
-                    tcpClient.GetStream().WriteAsync(packetBytes2, 0, packetBytes2.Length);
-
-                    NewsContentPacket packet3 = new NewsContentPacket();
-                    byte[] packetBytes3 = packet3.CreatePacket();
-                    tcpClient.GetStream().WriteAsync(packetBytes3, 0, packetBytes3.Length);
 
                     var task = HandleConnectionAsync(tcpClient);
                     // if already faulted, re-throw any error on the calling context
@@ -47,62 +44,120 @@ namespace ConnectServer.ClientConnector
 
         private Task HandleConnectionAsync(TcpClient tcpClient)
         {
+            WelcomePacket packet = new WelcomePacket();
+            byte[] packetBytes = packet.CreatePacket();
+            Send(tcpClient, packetBytes);
+            //await tcpClient.GetStream().WriteAsync(packetBytes, 0, packetBytes.Length);
+
+            NewsTitlePacket packet2 = new NewsTitlePacket();
+            byte[] packetBytes2 = packet2.CreatePacket();
+            //await tcpClient.GetStream().WriteAsync(packetBytes2, 0, packetBytes2.Length);
+            Send(tcpClient, packetBytes2);
+
+            NewsContentPacket packet3 = new NewsContentPacket();
+            byte[] packetBytes3 = packet3.CreatePacket();
+            //await tcpClient.GetStream().WriteAsync(packetBytes3, 0, packetBytes3.Length);
+            Send(tcpClient, packetBytes3);
+
             return Task.Run(async () =>
             {
                 using (var networkStream = tcpClient.GetStream())
                 {
-                    var buffer = new byte[4096];
-                    Console.WriteLine("[Server] Reading from client");
-                    var byteCount = await networkStream.ReadAsync(buffer, 0, buffer.Length);
-
-                    int? size = null;
-                    HeadCodeSc? headcode = null;
-                    byte type = buffer[0];
-
-                    if (type == 0xC1 || type == 0xC3)
+                    while (true)
                     {
-                        size = buffer[1];
-                        headcode = (HeadCodeSc)buffer[2];
-                        Console.WriteLine("C1/C3 packet type");
-                    }
-                    else if (type == 0xC2 || type == 0xC4)
-                    {
-                        size = buffer[1] * 256;
-                        size |= buffer[2];
-                        headcode = (HeadCodeSc)buffer[3];
-                        Console.WriteLine("C2/C4 packet type");
-                    }
-                    else
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Unknow packet type 0x{0:X}", type);
-                        Console.ResetColor();
-                    }
+                        var buffer = new byte[4096];
+                        Console.WriteLine("[Server] Reading from client");
+                        var byteCount = await networkStream.ReadAsync(buffer, 0, buffer.Length);
 
-                    Console.WriteLine("Read {0} bytes from socket.",
-                        byteCount);
-                    Console.WriteLine("Packet type: 0x{0:X} headcode: 0x{1:X} size: 0x{2:X}", type, headcode, size);
-                    Console.WriteLine(BitConverter.ToString(buffer));
+                        int? size = null;
+                        HeadCodeSc? headcode = null;
+                        byte type = buffer[0];
 
-                    if (headcode == HeadCodeSc.ConnectServerData)
-                    {
-                        if ((HeadCodeCs)buffer[3] == HeadCodeCs.ClientConnect)
+                        if (type == 0xC1 || type == 0xC3)
                         {
-                            ServerListPacket packetData = new ServerListPacket();
-                            byte[] packetBytes4 = packetData.CreatePacket();
-                            //Send(handler, packetData.CreatePacket());
-                            await networkStream.WriteAsync(packetBytes4, 0, packetBytes4.Length);
+                            size = buffer[1];
+                            headcode = (HeadCodeSc)buffer[2];
+                            Console.WriteLine("C1/C3 packet type");
                         }
-                        else if ((HeadCodeCs)buffer[3] == HeadCodeCs.ServerSelect)
+                        else if (type == 0xC2 || type == 0xC4)
                         {
-                            byte[] packetData2 = { 0xC1, 0x15, 0xF4, 0x03, 0x31, 0x39, 0x32, 0x2e, 0x31, 0x36, 0x38, 0x2e, 0x31, 0x35, 0x38, 0x00, 0x00, 0x00, 0x00, 0x00, 0xDA, 0x5C };
-                            //Send(handler, packetData2);
+                            size = buffer[1] * 256;
+                            size |= buffer[2];
+                            headcode = (HeadCodeSc)buffer[3];
+                            Console.WriteLine("C2/C4 packet type");
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Unknow packet type 0x{0:X}", type);
+                            Console.ResetColor();
+                        }
+
+                        Console.WriteLine("Read {0} bytes from socket.",
+                            byteCount);
+                        Console.WriteLine("Packet type: 0x{0:X} headcode: 0x{1:X} size: 0x{2:X}", type, headcode, size);
+                        Console.WriteLine(BitConverter.ToString(buffer));
+
+                        if (headcode == HeadCodeSc.ConnectServerData)
+                        {
+                            if ((HeadCodeCs)buffer[3] == HeadCodeCs.ClientConnect)
+                            {
+                                ServerListPacket packetData = new ServerListPacket(udpServer);
+                                byte[] packetBytes4 = packetData.CreatePacket();
+                                //await networkStream.WriteAsync(packetBytes4, 0, packetBytes4.Length);
+                                Send(tcpClient, packetBytes4);
+                            }
+                            else if ((HeadCodeCs)buffer[3] == HeadCodeCs.ServerSelect)
+                            {
+                                ServerDataPacket packetData = new ServerDataPacket(udpServer, buffer);
+                                byte[] packetBytes4 = packetData.CreatePacket();
+                                //await networkStream.WriteAsync(packetBytes4, 0, packetBytes4.Length);
+
+                                //byte[] packetData2 = { 0xC1, 0x15, 0xF4, 0x03, 0x31, 0x39, 0x32, 0x2e, 0x31, 0x36, 0x38, 0x2e, 0x31, 0x35, 0x38, 0x00, 0x00, 0x00, 0x00, 0x00, 0xDA, 0x5C };
+                                //Send(handler, packetData2);
+                                Send(tcpClient, packetBytes4);
+                            }
                         }
                     }
-
-                    await HandleConnectionAsync(tcpClient);
+                    //await HandleConnectionAsync(tcpClient);
                 }
             });
+        }
+
+        private void Send(TcpClient tcpClient, byte[] packet)
+        {
+            try
+            {
+                NetworkStream stream = tcpClient.GetStream();
+                if (stream.CanWrite)
+                {
+                    stream.BeginWrite(packet, 0, packet.Length, HandleDatagramWritten, tcpClient);
+                }
+            }
+            catch (ObjectDisposedException ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        private void HandleDatagramWritten(IAsyncResult ar)
+        {
+            try
+            {
+                ((TcpClient)ar.AsyncState).GetStream().EndWrite(ar);
+            }
+            catch (ObjectDisposedException ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
 
         /*public static void AcceptCallback(IAsyncResult ar)

@@ -6,16 +6,17 @@ using System.Text;
 
 namespace ConnectServer.ServerConnector
 {
-    class Server
+    public class Server
     {
-        List<ServerObject> servers = new List<ServerObject>();
+        public List<ServerObject> Servers { private set; get; } = new List<ServerObject>();
+
         public void Run(Config config)
         {
             this.receiveMessage(config.UdpPort);
         }
         public void UpdateOrAddServer(ServerDataUpdatePacket serverDataUpdatePacket)
         {
-            foreach( ServerObject serverObject in this.servers)
+            foreach( ServerObject serverObject in this.Servers)
             {
                 if(serverObject.ServerCode == serverDataUpdatePacket.ServerCode)
                 {
@@ -27,7 +28,10 @@ namespace ConnectServer.ServerConnector
             ServerObject newServerObject = new ServerObject();
             newServerObject.ServerCode = serverDataUpdatePacket.ServerCode;
             newServerObject.Percent = serverDataUpdatePacket.Percent;
-            this.servers.Add(newServerObject);
+            lock (this.Servers)
+            {
+                this.Servers.Add(newServerObject);
+            }
         }
         private async void receiveMessage(ushort port)
         {

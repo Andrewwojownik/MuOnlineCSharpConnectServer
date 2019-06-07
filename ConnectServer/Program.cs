@@ -19,8 +19,8 @@ namespace ConnectServer
             udpServer.Run(config);
 
             Console.WriteLine("Starting Connect Server on port: {0}", config.Port);
-            clientServer = new ClientConnector.Server();
-            clientServer.Run(config);
+            clientServer = new ClientConnector.Server(config, udpServer);
+            clientServer.Run();
 
             while (true)
             {
