@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 using ConnectServer.ServerConnector;
 
 namespace ConnectServer.Packets.SC
@@ -27,6 +28,11 @@ namespace ConnectServer.Packets.SC
             foreach (ServerObject server in server.Servers)
             {
                 if(server.Visible == false)
+                {
+                    continue;
+                }
+
+                if(server.LastUpdateDate.AddSeconds(5) < DateTime.Now)
                 {
                     continue;
                 }

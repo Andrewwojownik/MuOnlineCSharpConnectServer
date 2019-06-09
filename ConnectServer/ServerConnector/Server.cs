@@ -59,6 +59,7 @@ namespace ConnectServer.ServerConnector
                 if(serverObject.ServerCode == serverDataUpdatePacket.ServerCode)
                 {
                     serverObject.Percent = serverDataUpdatePacket.Percent;
+                    serverObject.LastUpdateDate = DateTime.Now;
                     return;
                 }
             }
