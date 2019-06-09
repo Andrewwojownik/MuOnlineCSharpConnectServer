@@ -15,7 +15,7 @@ namespace ConnectServer.Packets.ServerClient
             this.server = server;
             this.packet = Program.ByteArrayToStructure<CsServerDataPacket>(rawPacket);
         }
-        public byte[] CreatePacket()
+        public SendPacket CreatePacket()
         {
             ShortPlainPacketHeader head = new ShortPlainPacketHeader
             {
@@ -48,7 +48,7 @@ namespace ConnectServer.Packets.ServerClient
 
             packet.IP = Program.ConvertStringToBytes(chosenServer.IP, 16);
 
-            return packet.GetBytes();
+            return new SendPacket { Size = packet.Head.Size, Packet = packet.GetBytes() };
         }
     }
 

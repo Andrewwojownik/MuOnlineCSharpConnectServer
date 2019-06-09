@@ -6,8 +6,9 @@ namespace ConnectServer.Packets.SC
 {
     internal class NewsContentPacket : ICreatePacketHandler
     {
-        public byte[] CreatePacket()
+        public SendPacket CreatePacket()
         {
+            int size = Marshal.SizeOf(typeof(ScNewsContentPacket));
             LongPlainPacketHeader head = new LongPlainPacketHeader
             {
                 Type = Type.LongPlain,
@@ -15,7 +16,7 @@ namespace ConnectServer.Packets.SC
                 HeadSubCode = HeadSubCodeSc.NewsContent
             };
 
-            head.SetSize((ushort)Marshal.SizeOf(typeof(ScNewsContentPacket)));
+            head.SetSize((ushort)size);
 
             ScNewsContentPacket packet = new ScNewsContentPacket
             {
@@ -37,7 +38,7 @@ namespace ConnectServer.Packets.SC
 
             packet.TextSize = 538;
 
-            return packet.GetBytes();
+            return new SendPacket { Size = size, Packet = packet.GetBytes() };
         }
     }
 

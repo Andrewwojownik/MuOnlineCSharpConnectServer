@@ -45,19 +45,13 @@ namespace ConnectServer.ClientConnector
         private Task HandleConnectionAsync(TcpClient tcpClient)
         {
             WelcomePacket packet = new WelcomePacket();
-            byte[] packetBytes = packet.CreatePacket();
-            Send(tcpClient, packetBytes);
-            //await tcpClient.GetStream().WriteAsync(packetBytes, 0, packetBytes.Length);
+            Send(tcpClient, packet.CreatePacket());
 
             NewsTitlePacket packet2 = new NewsTitlePacket();
-            byte[] packetBytes2 = packet2.CreatePacket();
-            //await tcpClient.GetStream().WriteAsync(packetBytes2, 0, packetBytes2.Length);
-            Send(tcpClient, packetBytes2);
+            Send(tcpClient, packet2.CreatePacket());
 
             NewsContentPacket packet3 = new NewsContentPacket();
-            byte[] packetBytes3 = packet3.CreatePacket();
-            //await tcpClient.GetStream().WriteAsync(packetBytes3, 0, packetBytes3.Length);
-            Send(tcpClient, packetBytes3);
+            Send(tcpClient, packet3.CreatePacket());
 
             return Task.Run(async () =>
             {
@@ -91,12 +85,13 @@ namespace ConnectServer.ClientConnector
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("Unknow packet type 0x{0:X}", type);
                             Console.ResetColor();
+                            continue;
                         }
 
                         Console.WriteLine("Read {0} bytes from socket.",
                             byteCount);
                         Console.WriteLine("Packet type: 0x{0:X} headcode: 0x{1:X} size: 0x{2:X}", type, headcode, size);
-                        Console.WriteLine(BitConverter.ToString(buffer));
+                        Console.WriteLine(BitConverter.ToString(buffer, 0, (int)size));
 
                         try
                         {
@@ -105,16 +100,14 @@ namespace ConnectServer.ClientConnector
                                 if ((HeadCodeCs)buffer[3] == HeadCodeCs.ClientConnect)
                                 {
                                     ServerListPacket packetData = new ServerListPacket(udpServer);
-                                    byte[] packetBytes4 = packetData.CreatePacket();
 
-                                    Send(tcpClient, packetBytes4);
+                                    Send(tcpClient, packetData.CreatePacket());
                                 }
                                 else if ((HeadCodeCs)buffer[3] == HeadCodeCs.ServerSelect)
                                 {
                                     ServerDataPacket packetData = new ServerDataPacket(udpServer, buffer);
-                                    byte[] packetBytes4 = packetData.CreatePacket();
 
-                                    Send(tcpClient, packetBytes4);
+                                    Send(tcpClient, packetData.CreatePacket());
                                 }
                             }
                         } catch(Exception)
@@ -127,14 +120,14 @@ namespace ConnectServer.ClientConnector
             });
         }
 
-        private void Send(TcpClient tcpClient, byte[] packet)
+        private void Send(TcpClient tcpClient, SendPacket packet)
         {
             try
             {
                 NetworkStream stream = tcpClient.GetStream();
                 if (stream.CanWrite)
                 {
-                    stream.BeginWrite(packet, 0, packet.Length, HandleDatagramWritten, tcpClient);
+                    stream.BeginWrite(packet.Packet, 0, packet.Size, HandleDatagramWritten, tcpClient);
                 }
             }
             catch (ObjectDisposedException ex)

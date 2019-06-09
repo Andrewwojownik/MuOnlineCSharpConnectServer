@@ -2,7 +2,7 @@
 {
     internal class WelcomePacket : ICreatePacketHandler
     {
-        public byte[] CreatePacket()
+        public SendPacket CreatePacket()
         {
             ShortPlainPacketHeader head = new ShortPlainPacketHeader
             {
@@ -13,7 +13,7 @@
 
             ScWelcomePacket packet = new ScWelcomePacket { Head = head, Result = 1 };
 
-            return packet.GetBytes();
+            return new SendPacket { Size = packet.Head.Size, Packet = packet.GetBytes() };
         }
     }
     internal struct ScWelcomePacket : IPacket

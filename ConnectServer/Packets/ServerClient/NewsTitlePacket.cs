@@ -6,7 +6,7 @@ namespace ConnectServer.Packets.SC
 {
     internal class NewsTitlePacket : ICreatePacketHandler
     {
-        public byte[] CreatePacket()
+        public SendPacket CreatePacket()
         {
             ScNewsTitlePacket packet = new ScNewsTitlePacket
             {
@@ -21,7 +21,7 @@ namespace ConnectServer.Packets.SC
             const string serverName = "KamikazeMU";
             packet.ServerName = Program.ConvertStringToBytes(serverName, 12);
 
-            return packet.GetBytes();
+            return new SendPacket { Size = packet.Head.Size, Packet = packet.GetBytes() };
         }
     }
 

@@ -77,7 +77,7 @@ namespace ConnectServer.ServerConnector
                     ServerUpdatePacket packet = new ServerUpdatePacket(this);
                     packet.Handle(receivedResult.Buffer);
 
-                    Console.WriteLine(BitConverter.ToString(receivedResult.Buffer));
+                    //Console.WriteLine(BitConverter.ToString(receivedResult.Buffer));
                 }
             }
         }

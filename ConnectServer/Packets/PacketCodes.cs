@@ -57,7 +57,7 @@
 
     public interface ICreatePacketHandler
     {
-        byte[] CreatePacket();
+        SendPacket CreatePacket();
     }
 
     public interface IIncomingPacketHandler

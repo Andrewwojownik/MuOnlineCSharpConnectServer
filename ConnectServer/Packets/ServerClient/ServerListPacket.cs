@@ -12,7 +12,7 @@ namespace ConnectServer.Packets.SC
         {
             this.server = server;
         }
-        public byte[] CreatePacket()
+        public SendPacket CreatePacket()
         {
             byte[] returnBytes = new byte[4096];
 
@@ -47,15 +47,15 @@ namespace ConnectServer.Packets.SC
                 ++count;
             }
 
-            head.SetSize((ushort)
-                (Marshal.SizeOf(typeof(ScServerListPacket))
-                + Marshal.SizeOf(typeof(ServerListEntryPart)) * count));
+            int size = (Marshal.SizeOf(typeof(ScServerListPacket))
+                + Marshal.SizeOf(typeof(ServerListEntryPart)) * count);
+            head.SetSize((ushort)size);
 
             ScServerListPacket packet = new ScServerListPacket { Head = head };
             packet.SetCount(count);
 
-            return packet.GetBytes()
-                .Combine(returnBytes);
+            return new SendPacket { Size = size, Packet = packet.GetBytes()
+                .Combine(returnBytes) };
         }
     }
 
